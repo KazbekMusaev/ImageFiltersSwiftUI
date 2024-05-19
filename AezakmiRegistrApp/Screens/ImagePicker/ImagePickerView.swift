@@ -22,18 +22,12 @@ struct ImagePickerView: View {
                             if model.image == UIImage(resource: .aezakmi) {
                                 if UIImage(data: model.imageData) == nil {
                                     PhotosPicker(selection: $model.selectedItem) {
-                                        if let processedImage = model.processedImage {
-                                            processedImage
-                                                .resizable()
-                                                .scaledToFit()
-                                        } else {
-                                            Image(systemName: "photo.stack.fill")
-                                                .buttonModifier(widht: proxy.size.width - 20,
-                                                                height: 200,
-                                                                opacity: 0.09,
-                                                                cornerRadius: 12,
-                                                                shadowRadius: 5)
-                                        }
+                                        Image(systemName: "photo.stack.fill")
+                                            .buttonModifier(widht: proxy.size.width - 20,
+                                                            height: 200,
+                                                            opacity: 0.09,
+                                                            cornerRadius: 12,
+                                                            shadowRadius: 5)
                                     }
                                     .onChange(of: model.selectedItem, model.loadImage)
                                 }
@@ -147,9 +141,8 @@ struct ImagePickerView: View {
             }
         }
         .sheet(isPresented: $model.showImagePicker) {
-            ImagePickerBuild(showPicker: $model.showImagePicker, 
-                             image: $model.image,
-                             imageData: $model.imageData)
+            ImagePickerBuild()
+                .environmentObject(model)
         }
         .alert(Text(model.message), isPresented: $model.showAlert, presenting: String()) { mess in
             Button("Ok", role: .cancel) { }

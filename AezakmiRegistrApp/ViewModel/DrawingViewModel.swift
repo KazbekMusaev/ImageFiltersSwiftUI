@@ -26,7 +26,7 @@ final class DrawingViewModel: ObservableObject {
     @Published var showSharedView = false
     
     @Published var useImageData: Bool = false
-    
+    @Published var cameraImage: Image?
     //Filtres
     @Published var showFilterView: Bool = false
     @Published var image = UIImage(resource: .aezakmi)
@@ -109,12 +109,19 @@ final class DrawingViewModel: ObservableObject {
     
     func loadImage() {
         Task {
-            guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
-            guard let inputImage = UIImage(data: imageData) else { return }
+            if useImageData {
+                guard let inputImage = UIImage(data: imageData) else { return }
+                let beginImage = CIImage(image: inputImage)
+                currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
+                applyProcessing()
+            } else {
+                guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
+                guard let inputImage = UIImage(data: imageData) else { return }
 
-            let beginImage = CIImage(image: inputImage)
-            currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
-            applyProcessing()
+                let beginImage = CIImage(image: inputImage)
+                currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
+                applyProcessing()
+            }
         }
     }
     
@@ -130,7 +137,14 @@ final class DrawingViewModel: ObservableObject {
         guard let cgImage = CIContext().createCGImage(outputImage, from: outputImage.extent) else { return }
 
         let uiImage = UIImage(cgImage: cgImage)
-        self.image = uiImage
+        if useImageData {
+            if let imageData = uiImage.pngData() {
+                self.imageData = imageData
+                self.cameraImage = Image(uiImage: uiImage)
+            }
+        } else {
+            self.image = uiImage
+        }
         processedImage = Image(uiImage: uiImage)
     }
     

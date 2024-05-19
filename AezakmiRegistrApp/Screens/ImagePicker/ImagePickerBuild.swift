@@ -9,9 +9,11 @@ import SwiftUI
 
 struct ImagePickerBuild: UIViewControllerRepresentable{
     
-    @Binding var showPicker: Bool
-    @Binding var image: UIImage
-    @Binding var imageData: Data
+    @EnvironmentObject var model: DrawingViewModel
+//    @Binding var showPicker: Bool
+//    @Binding var image: UIImage
+//    @Binding var imageData: Data
+//    @Binding var useCamera: Bool
     
     func makeCoordinator() -> Coordinator {
         ImagePickerBuild.Coordinator(parent: self)
@@ -39,14 +41,16 @@ struct ImagePickerBuild: UIViewControllerRepresentable{
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let imageData = (info[.originalImage] as? UIImage)?.pngData() {
                 guard let image = UIImage(data: imageData) else { return }
-                parent.imageData = imageData
-                parent.image = image
-                parent.showPicker.toggle()
+                parent.model.imageData = imageData
+                parent.model.image = image
+                parent.model.showImagePicker.toggle()
+                parent.model.useImageData.toggle()
+                parent.model.applyProcessing()
             }
         }
         
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            parent.showPicker.toggle()
+            parent.model.showImagePicker.toggle()
         }
     }
 }

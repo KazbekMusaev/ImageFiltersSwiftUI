@@ -26,23 +26,13 @@ struct DrawingView: View {
                         ImageFilter()
                             .environmentObject(model)
                     } else {
-                        if model.imageData.isEmpty {
-                            CanvasView(canvas: $model.canvas,
-                                       imageData: $model.imageData,
-                                       image: $model.image,
-                                       toolPicker: $model.toolPicker,
-                                       strokes: $model.strokes,
-                                       rect: size.size)
-                            .shadow(color: .white,radius: 10)
-                        } else {
-                            CanvasView(canvas: $model.canvas,
-                                       imageData: $model.imageData,
-                                       image: $model.image,
-                                       toolPicker: $model.toolPicker,
-                                       strokes: $model.strokes,
-                                       rect: size.size)
-                            .shadow(color: .white,radius: 10)
-                        }
+                        CanvasView(canvas: $model.canvas,
+                                   imageData: $model.imageData,
+                                   image: $model.image,
+                                   toolPicker: $model.toolPicker,
+                                   strokes: $model.strokes,
+                                   rect: size.size)
+                        .shadow(color: .white,radius: 10)
                     }
                     
                     ForEach(model.textBoxes) { box in
